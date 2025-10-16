@@ -5,7 +5,7 @@ def scan_bad_pumpkins(x0, y0, x1, y1):
     bad_pumpkins = set()
     for y in range(y0, y1 + 1):
         for x in range(x0, x1 + 1):
-            if get_entity_type() == Entities.Dead_Pumpkin:
+            if get_entity_type() == Entities.Dead_Pumpkin or not can_harvest():
                 bad_pumpkins.add((x, y))
             if (x < x1):
                 move(East)
