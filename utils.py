@@ -3,7 +3,9 @@ EntityNeedsSoilLookup = {
     Entities.Bush: False,
     Entities.Tree: False,
     Entities.Carrot: True,
-    Entities.Pumpkin: True
+    Entities.Pumpkin: True,
+    Entities.Sunflower: True,
+    Entities.Cactus: True,
 }
 
 def restart():
