@@ -1,20 +1,7 @@
-from utils import restart, mov
-
-def init_pumpkin_patch(x0, y0, x1, y1):
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
-            if can_harvest():
-                harvest()
-            if (get_ground_type() == Grounds.Grassland):
-                till()
-            plant(Entities.Pumpkin)
-            if (x < x1):
-                move(East)
-        if (y < y1):
-            mov(x0, y + 1)
-    mov(x0, y0)
+from utils import restart, mov, do_simple_patch
 
 def scan_bad_pumpkins(x0, y0, x1, y1):
+    mov(x0, y0)
     bad_pumpkins = set()
     for y in range(y0, y1 + 1):
         for x in range(x0, x1 + 1):
@@ -26,12 +13,9 @@ def scan_bad_pumpkins(x0, y0, x1, y1):
             mov(x0, y + 1)
     return bad_pumpkins
 
-def do_pumpkin_patch(start, end):
-    x0, y0 = start
-    x1, y1 = end
-    mov(x0, y0)
-    init_pumpkin_patch(x0, y0, x1, y1)
-    bad_pumpkins = scan_bad_pumpkins(x0, y0, x1, y1)
+def do_pumpkin_patch(x0, y0, x1, y1):
+    do_simple_patch(x0, y0, x1, y1, Entities.Pumpkin)
+    bad_pumpkins = scan_bad_pumpkins(x0, y0, x1, y1)  # TODO: Check bad pumpkins in sliding window
     while len(bad_pumpkins) > 0:
         tmp = set()
         for x, y in bad_pumpkins:
@@ -43,9 +27,8 @@ def do_pumpkin_patch(start, end):
                 tmp.add((x, y))
         bad_pumpkins = tmp
     harvest()
-    mov(x0, y0)
 
 if __name__ == "__main__":
     restart()
     while True:
-        do_pumpkin_patch((0, 0), (5, 5))
+        do_pumpkin_patch(0, 0, 5, 5)
