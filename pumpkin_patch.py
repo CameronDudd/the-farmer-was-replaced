@@ -1,21 +1,6 @@
-from utils import restart, mov, do_simple_patch
+from utils import mov, plant_simple_patch, ternary
 
-def scan_bad_pumpkins(x0, y0, x1, y1):
-    mov(x0, y0)
-    bad_pumpkins = set()
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
-            if get_entity_type() == Entities.Dead_Pumpkin or not can_harvest():
-                bad_pumpkins.add((x, y))
-            if (x < x1):
-                move(East)
-        if (y < y1):
-            mov(x0, y + 1)
-    return bad_pumpkins
-
-def do_pumpkin_patch(x0, y0, x1, y1):
-    do_simple_patch(x0, y0, x1, y1, Entities.Pumpkin)
-    bad_pumpkins = scan_bad_pumpkins(x0, y0, x1, y1)  # TODO: Check bad pumpkins in sliding window
+def harvest_pumpkins(bad_pumpkins):
     while len(bad_pumpkins) > 0:
         tmp = set()
         for x, y in bad_pumpkins:
@@ -28,7 +13,23 @@ def do_pumpkin_patch(x0, y0, x1, y1):
         bad_pumpkins = tmp
     harvest()
 
-if __name__ == "__main__":
-    restart()
-    while True:
-        do_pumpkin_patch(0, 0, 5, 5)
+def scan_bad_pumpkins(x0, y0, x1, y1):
+    mov(x0, y0)
+    xn = x1 - x0
+    bad_pumpkins = set()
+    for y in range(y1 - y0 + 1):
+        row_even = y % 2 == 0
+        direction = ternary(row_even, East, West)
+        for x in range(xn + 1):
+            if get_entity_type() == Entities.Dead_Pumpkin:
+                plant(Entities.Pumpkin)
+                bad_pumpkins.add((ternary(row_even, x0 + x, x1 - x), y0 + y))
+            elif not can_harvest():
+                bad_pumpkins.add((ternary(row_even, x0 + x, x1 - x), y0 + y))
+            if (x < xn):
+                move(direction)
+        move(North)
+    return bad_pumpkins
+
+def plant_pumpkin_patch(x0, y0, x1, y1):
+    plant_simple_patch(x0, y0, x1, y1, Entities.Pumpkin)
