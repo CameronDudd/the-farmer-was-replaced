@@ -43,17 +43,40 @@ def mov(x, y):
     submov(get_pos_x(), x, East, West, n)
     submov(get_pos_y(), y, North, South, n)
 
+def bisect_left(a, x, lo, hi):
+    if lo >= hi:
+        return lo
+    mid = (hi + lo) // 2
+    if a[mid] < x:
+        return bisect_left(a, x, mid + 1, hi)
+    else:
+        return bisect_left(a, x, lo, mid)
 
-def do_simple_patch(x0, y0, x1, y1, entity):
+def harvest_patch(x0, y0, x1, y1):
     mov(x0, y0)
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
+    xn = x1 - x0
+    for y in range(y1 - y0 + 1):
+        row_even = y % 2 == 0
+        direction = ternary(row_even, East, West)
+        for x in range(xn + 1):
+            if can_harvest():
+                harvest()
+            if (x < xn):
+                move(direction)
+        move(North)
+
+def plant_simple_patch(x0, y0, x1, y1, entity):
+    mov(x0, y0)
+    xn = x1 - x0
+    for y in range(y1 - y0 + 1):
+        row_even = y % 2 == 0
+        direction = ternary(row_even, East, West)
+        for x in range(xn + 1):
             if can_harvest():
                 harvest()
             if not (EntityNeedsSoilLookup[entity] and (get_ground_type() == Grounds.Soil)):
                 till()
             plant(entity)
-            if (x < x1):
-                move(East)
-        if (y < y1):
-            mov(x0, y + 1)
+            if (x < xn):
+                move(direction)
+        move(North)
