@@ -1,6 +1,6 @@
 from utils import restart, mov, plant_simple_patch
 
-def harvest_cacti(x0, y0, x1, y1):
+def harvest_cacti_patch(x0, y0, x1, y1):
     for y in range(y0, y1 + 1):
         sorted = False
         xmin = x0
@@ -25,7 +25,7 @@ def harvest_cacti(x0, y0, x1, y1):
             xmin += 1
     for x in range(x0, x1 + 1):
         sorted = False
-        ymin = x0
+        ymin = y0
         ymax = y1
         while not sorted:
             sorted = True
@@ -58,4 +58,4 @@ if __name__ == "__main__":
     restart()
     while True:
         plant_cacti_patch(0, 0, n, n)
-        harvest_cacti(0, 0, n, n)
+        harvest_cacti_patch(0, 0, n, n)
